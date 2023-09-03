@@ -14,3 +14,5 @@ jobs:
       run: docker compose rm -f --all
     - name: Build and Up Container
       run: docker compose up -d --build
+    - name: change permission
+      run: chown $VBNA_FILE_OWNER -R ./
