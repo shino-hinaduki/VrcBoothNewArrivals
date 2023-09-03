@@ -9,15 +9,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Stop service
-      run: docker compose stop
-      working-directory: ${{ secrets.VBNA_RUNNER_WORK }}
+      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose stop
       continue-on-error: true
     - name: Remove container
-      run: docker-compose down --rmi all --volumes --remove-orphans
-      working-directory: ${{ secrets.VBNA_RUNNER_WORK }}
+      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker-compose down --rmi all --volumes --remove-orphans
       continue-on-error: true
     - name: Copy from new repo to work
       run: cp -r ./* ${{ secrets.VBNA_RUNNER_WORK }}
     - name: Build and up
-      run: VBNA_WEBHOOK_URL=${{ secrets.VBNA_WEBHOOK_URL }} docker compose up -d --build
-      working-directory: ${{ secrets.VBNA_RUNNER_WORK }}
+      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && VBNA_WEBHOOK_URL=${{ secrets.VBNA_WEBHOOK_URL }} docker compose up -d --build
+      
