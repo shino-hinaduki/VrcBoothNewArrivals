@@ -9,8 +9,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Stop Service
-      run: docker-compose stop
+      run: docker compose stop
     - name: Remove Container
-      run: docker-compose rm -f --all
+      run: docker compose rm -f --all
     - name: Build and Up Container
-      run: docker-compose up -d --build
+      run: docker compose up -d --build
