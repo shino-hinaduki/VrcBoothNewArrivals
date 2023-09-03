@@ -299,7 +299,7 @@ def create_info_file(
     # save file
     with open(dst_json_path, mode="w", encoding="utf-8") as f:
         json.dump(dst, f, ensure_ascii=False)
-    # webhook
+    # post webhook
     webhook_url = get_config_or_default("VBNA_WEBHOOK_URL", "")
     if webhook_url:
         webhook = DiscordWebhook(url=webhook_url, content="Data Updated!")
@@ -354,6 +354,15 @@ logging.basicConfig(level=logging.INFO, format="[VBNA][%(levelname)s]: %(message
 # force 1st update
 if "VBNA_UPDATE_ON_BOOT" in os.environ:
     update_data()
+# boot message post webhook
+webhook_url = get_config_or_default("VBNA_WEBHOOK_URL", "")
+if webhook_url:
+    webhook = DiscordWebhook(
+        url=webhook_url, content=f"VBNA Server wakeup. hash={get_git_hash()}"
+    )
+    resp = webhook.execute()
+    if not (resp.ok):
+        raise ConnectionError(resp)
 
 # start api server
 app = FastAPI()
