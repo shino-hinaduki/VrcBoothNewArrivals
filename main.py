@@ -251,19 +251,6 @@ def create_tile_image(dst_dir: str, local_images: list[str]) -> (str, dict[str, 
     )
 
 
-def get_git_hash() -> str:
-    """現在のcommit hashを返す
-
-    Returns:
-        str: hash(short)
-    """
-    return (
-        subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
-        .strip()
-        .decode("utf-8")
-    )
-
-
 def create_info_file(
     dst_dir: str,
     target_url: str,
@@ -291,7 +278,6 @@ def create_info_file(
 
     dst = {
         "created_at": str(datetime.datetime.now()),
-        "hash": get_git_hash(),
         "target_url": target_url,
         "items": items,
         "img_info": img_info,
@@ -325,7 +311,7 @@ def update_data():
     """
     生成データの更新
     """
-    logging.info(f"VrcBoothNewArrivals hash={get_git_hash()}")
+    logging.info(f"VrcBoothNewArrivals")
 
     target_url = get_booth_items_url()
     logging.info(f"start download... target_url={target_url}")
@@ -357,9 +343,7 @@ if "VBNA_UPDATE_ON_BOOT" in os.environ:
 # boot message post webhook
 webhook_url = get_config_or_default("VBNA_WEBHOOK_URL", "")
 if webhook_url:
-    webhook = DiscordWebhook(
-        url=webhook_url, content=f"VBNA Server wakeup. hash={get_git_hash()}"
-    )
+    webhook = DiscordWebhook(url=webhook_url, content=f"VBNA Server wakeup")
     resp = webhook.execute()
     if not (resp.ok):
         raise ConnectionError(resp)
@@ -380,7 +364,6 @@ async def root():
     """
     return {
         "name": "VrcBoothNewArrivals-internal",
-        "hash": get_git_hash(),
         "json": "/static/index.json",
         "jpg": "/static/index.jpg",
     }
