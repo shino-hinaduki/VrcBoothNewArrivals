@@ -1,0 +1,17 @@
+name: Deploy to Self Hosted Runner
+
+on:
+  push:
+    tags:
+      - "v*
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+    - name: Stop Service
+      run: docker-compose stop
+    - name: Remove Container
+      run: docker-compose rm -f --all
+    - name: Build and Up Container
+      run: docker-compose up -d --build
