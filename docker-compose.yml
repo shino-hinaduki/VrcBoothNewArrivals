@@ -2,7 +2,9 @@ version: "3"
 
 services:
   vbna_server:
-    build: ./
+    build:
+      context: ./
+      dockerfile: vbna_server.Dockerfile
     working_dir: /usr/src/app
     volumes:
       - ./:/usr/src/app
@@ -14,3 +16,20 @@ services:
       options:
         max-size: 1m
         max-file: "3"
+  static_file_server:
+    build:
+      context: ./
+      dockerfile: static_file_server.Dockerfile
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+    restart: always
+    ports:
+      - 22011:22011 # for public files
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "3"
+    depends_on:
+      - vbna_server
