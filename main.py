@@ -5,6 +5,8 @@ import shutil
 import subprocess
 import json
 import logging
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from bs4 import BeautifulSoup
 from PIL import Image
 from discord_webhook import DiscordWebhook, DiscordEmbed
@@ -319,8 +321,10 @@ def create_info_file(
     return dst
 
 
-def main():
-    logging.basicConfig(level=logging.INFO, format="[VBNA][%(levelname)s]: %(message)s")
+def update_data():
+    """
+    生成データの更新
+    """
     logging.info(f"VrcBoothNewArrivals hash={get_git_hash()}")
 
     target_url = get_booth_items_url()
@@ -341,7 +345,28 @@ def main():
     dst_image_path, img_info = create_tile_image(dst_dir, local_image_path_arr)
     info = create_info_file(dst_dir, target_url, items, dst_image_path, img_info)
     logging.info(f"Done. info={info}")
+    return info
 
 
-if __name__ == "__main__":
-    main()
+############################################################################################################################
+# internal api server setup
+logging.basicConfig(level=logging.INFO, format="[VBNA][%(levelname)s]: %(message)s")
+# force 1st update
+if "VBNA_UPDATE_ON_BOOT" in os.environ:
+    update_data()
+
+# start api server
+app = FastAPI()
+# get_dst_dir内でディレクトリがなければ生成されている
+dst_dir = get_dst_dir()
+app.mount("/static", StaticFiles(directory=dst_dir), name="static")
+
+
+@app.get("/")
+async def root():
+    return {"name": "VrcBoothNewArrivals", "hash": get_git_hash()}
+
+
+@app.get("/update")
+async def update():
+    return update_data()
