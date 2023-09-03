@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  python-batch:
+    build: ./
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+        max-file: "3"
