@@ -3,9 +3,6 @@ on:
   push:
     tags:
       - "v*"
-env:
-  VBNA_FILE_OWNER: ${{ vars.VBNA_FILE_OWNER }}
-  VBNA_WEBHOOK_URL: ${{ vars.VBNA_WEBHOOK_URL }}
 jobs:
   build-and-deploy:
     runs-on: self-hosted
@@ -16,6 +13,6 @@ jobs:
     - name: Remove Container
       run: docker compose rm -f --all
     - name: Build and Up Container
-      run: docker compose up -d --build
+      run: VBNA_WEBHOOK_URL=${{ vars.VBNA_WEBHOOK_URL }} docker compose up -d --build
     - name: change permission
-      run: chown $VBNA_FILE_OWNER -R ./
+      run: chown ${{ vars.VBNA_FILE_OWNER }} -R ./
