@@ -364,9 +364,24 @@ app.mount("/static", StaticFiles(directory=dst_dir), name="static")
 
 @app.get("/")
 async def root():
-    return {"name": "VrcBoothNewArrivals", "hash": get_git_hash()}
+    """現在のCommit hashなどを返す
+
+    Returns:
+        dict[str]: サーバ情報
+    """
+    return {
+        "name": "VrcBoothNewArrivals-internal",
+        "hash": get_git_hash(),
+        "json": "/static/index.json",
+        "jpg": "/static/index.jpg",
+    }
 
 
 @app.get("/update")
-async def update():
+def update():
+    """リソースの更新。シングルスレッド動作
+
+    Returns:
+        dict[str]: 実施結果
+    """
     return update_data()
