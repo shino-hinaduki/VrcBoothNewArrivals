@@ -13,6 +13,6 @@ jobs:
     - name: Remove Container
       run: docker compose rm -f --all
     - name: Build and Up Container
-      run: VBNA_WEBHOOK_URL=${{ vars.VBNA_WEBHOOK_URL }} docker compose up -d --build
+      run: VBNA_WEBHOOK_URL=${{ secrets.VBNA_WEBHOOK_URL }} docker compose up -d --build
     - name: change permission
-      run: chown ${{ vars.VBNA_FILE_OWNER }} -R ./
+      run: chown ${{ secrets.VBNA_FILE_OWNER }} -R ./
