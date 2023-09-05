@@ -7,15 +7,14 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v3
-    - name: Stop service
-      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose stop
-      continue-on-error: true
-    - name: Remove container
-      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose down --rmi all --volumes --remove-orphans
-      continue-on-error: true
-    - name: Copy from new repo to work
-      run: cp -r ./* ${{ secrets.VBNA_RUNNER_WORK }}
-    - name: Build and up
-      run: cd ${{ secrets.VBNA_RUNNER_WORK }} && VBNA_WEBHOOK_URL=${{ secrets.VBNA_WEBHOOK_URL }} docker compose up -d --build
-      
+      - uses: actions/checkout@v3
+      - name: Stop service
+        run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose stop
+        continue-on-error: true
+      - name: Remove container
+        run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose down --rmi all --volumes
+        continue-on-error: true
+      - name: Copy from new repo to work
+        run: cp -r ./* ${{ secrets.VBNA_RUNNER_WORK }}
+      - name: Build and up
+        run: cd ${{ secrets.VBNA_RUNNER_WORK }} && VBNA_WEBHOOK_URL=${{ secrets.VBNA_WEBHOOK_URL }} docker compose up -d --build
