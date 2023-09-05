@@ -385,7 +385,9 @@ update_on_boot = get_config_or_default("VBNA_UPDATE_ON_BOOT", False)
 
 
 @app.on_event("startup")
-@repeat_every(seconds=update_period_seconds, logger=logging, wait_first=update_on_boot)
+@repeat_every(
+    seconds=update_period_seconds, logger=logging, wait_first=not (update_on_boot)
+)
 def update():
     """リソースの更新"""
     update_data()
