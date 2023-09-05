@@ -377,6 +377,7 @@ async def root():
 
 
 # 定期更新
+# Booth serverに迷惑かかると困るので止まる方優先
 update_period_seconds = get_config_or_default(
     "VBNA_UPDATE_PERIOD_SECONDS", 12 * 60 * 60
 )
@@ -386,7 +387,10 @@ update_on_boot = get_config_or_default("VBNA_UPDATE_ON_BOOT", False)
 
 @app.on_event("startup")
 @repeat_every(
-    seconds=update_period_seconds, logger=logging, wait_first=not (update_on_boot)
+    seconds=update_period_seconds,
+    logger=logging,
+    wait_first=not (update_on_boot),
+    raise_exceptions=True,
 )
 def update():
     """リソースの更新"""
