@@ -7,6 +7,7 @@ import json
 import logging
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi_utils.tasks import repeat_every
 from bs4 import BeautifulSoup
 from PIL import Image
 from discord_webhook import DiscordWebhook, DiscordEmbed
@@ -311,6 +312,15 @@ def update_data():
     """
     生成データの更新
     """
+
+    # boot message post webhook
+    webhook_url = get_config_or_default("VBNA_WEBHOOK_URL", "")
+    if webhook_url:
+        webhook = DiscordWebhook(url=webhook_url, content=f"Start Update...")
+        resp = webhook.execute()
+        if not (resp.ok):
+            raise ConnectionError(resp)
+
     logging.info(f"VrcBoothNewArrivals")
 
     target_url = get_booth_items_url()
@@ -330,20 +340,17 @@ def update_data():
 
     dst_image_path, img_info = create_tile_image(dst_dir, local_image_path_arr)
     info = create_info_file(dst_dir, target_url, items, dst_image_path, img_info)
-    logging.info(f"Done. info={info}")
+    logging.info(f"Done.")
     return info
 
 
 ############################################################################################################################
 # internal api server setup
 logging.basicConfig(level=logging.INFO, format="[VBNA][%(levelname)s]: %(message)s")
-# force 1st update
-if "VBNA_UPDATE_ON_BOOT" in os.environ:
-    update_data()
 # boot message post webhook
 webhook_url = get_config_or_default("VBNA_WEBHOOK_URL", "")
 if webhook_url:
-    webhook = DiscordWebhook(url=webhook_url, content=f"VBNA Server wakeup")
+    webhook = DiscordWebhook(url=webhook_url, content=f"Start Server")
     resp = webhook.execute()
     if not (resp.ok):
         raise ConnectionError(resp)
@@ -369,11 +376,16 @@ async def root():
     }
 
 
-@app.get("/update")
-def update():
-    """リソースの更新。シングルスレッド動作
+# 定期更新
+update_period_seconds = get_config_or_default(
+    "VBNA_UPDATE_PERIOD_SECONDS", 12 * 60 * 60
+)
+# force 1st update
+update_on_boot = get_config_or_default("VBNA_UPDATE_ON_BOOT", False)
 
-    Returns:
-        dict[str]: 実施結果
-    """
-    return update_data()
+
+@app.on_event("startup")
+@repeat_every(seconds=update_period_seconds, logger=logging, wait_first=update_on_boot)
+def update():
+    """リソースの更新"""
+    update_data()
