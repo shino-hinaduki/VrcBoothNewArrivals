@@ -2,7 +2,7 @@ import os
 import datetime
 import requests
 import shutil
-import subprocess
+import glob
 import json
 import logging
 from fastapi import FastAPI
@@ -359,6 +359,11 @@ if webhook_url:
 app = FastAPI()
 # get_dst_dir内でディレクトリがなければ生成されている
 dst_dir = get_dst_dir()
+# staticにあるファイルを公開用にコピー
+if os.path.exists("static"):
+    for src_path in glob.glob("static/**/*", recursive=True):
+        shutil.copy(src_path, dst_dir)
+# 公開
 app.mount("/static", StaticFiles(directory=dst_dir), name="static")
 
 

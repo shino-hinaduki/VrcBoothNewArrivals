@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VRC Booth New Arrivals API</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        color: #333;
+      }
+      .image-container {
+        margin-top: 20px;
+      }
+      img {
+        max-width: 100%;
+      }
+      #data-container {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: #ddd;
+        border: 1px solid #ddd;
+        overflow-x: auto;
+        text-align: left;
+      }
+      #usage {
+        margin-top: 20px;
+      }
+      #copyright {
+        margin-top: 20px;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>VRC Booth New Arrivals API</h1>
+      <p>VRChat ワールド向けのBooth新着アイテム取得非公式API</p>
+
+      <div id="usage">
+        <h2>使い方</h2>
+        <p>
+          VRCImageDownloader, VRCStringDownloader で、
+          <a href="https://vbna.azarashino.info/index.jpg"
+            >https://vbna.azarashino.info/index.jpg</a
+          >
+          と
+          <a href="https://vbna.azarashino.info/index.json"
+            >https://vbna.azarashino.info/index.json</a
+          >
+          を読み取るだけです。
+        </p>
+        <p>
+          上記ファイルはBooth Serverに負荷をかけない頻度で定期的に更新されます。
+        </p>
+      </div>
+
+      <div class="image-container">
+        <h2><a href="https://vbna.azarashino.info/index.jpg">index.jpg</a></h2>
+        <img id="image" src="index.jpg" alt="画像" />
+      </div>
+
+      <h2>
+        <a href="https://vbna.azarashino.info/index.json">index.json</a>
+      </h2>
+      <div id="data-container">
+        <pre id="data">Loading...</pre>
+      </div>
+
+      <div id="copyright">
+        <p>&copy; 2023 vbna.azarashino.info. All Rights Reserved.</p>
+      </div>
+    </div>
+
+    <script>
+      // JSONデータを非同期で読み込み・更新する関数
+      async function updateData() {
+        const response = await fetch("index.json");
+        const jsonData = await response.json();
+        document.getElementById("data").textContent = JSON.stringify(
+          jsonData,
+          null,
+          2
+        );
+      }
+      updateData();
+    </script>
+  </body>
+</html>
