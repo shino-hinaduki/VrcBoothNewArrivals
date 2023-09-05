@@ -330,7 +330,7 @@ def update_data():
 
     dst_image_path, img_info = create_tile_image(dst_dir, local_image_path_arr)
     info = create_info_file(dst_dir, target_url, items, dst_image_path, img_info)
-    logging.info(f"Done. info={info}")
+    logging.info(f"Done.")
     return info
 
 
