@@ -12,7 +12,7 @@ jobs:
         run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose stop
         continue-on-error: true
       - name: Remove container
-        run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose down --rmi all --volumes
+        run: cd ${{ secrets.VBNA_RUNNER_WORK }} && docker compose down --rmi local --volumes
         continue-on-error: true
       - name: Copy from new repo to work
         run: cp -r ./* ${{ secrets.VBNA_RUNNER_WORK }}
