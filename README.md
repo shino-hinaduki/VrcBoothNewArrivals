@@ -7,7 +7,7 @@
 ### Python
 
 ```sh
-$ python ./main.py
+$ uvicorn main:app --reload
 ```
 
 ### Docker Compose
