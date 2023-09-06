@@ -214,7 +214,7 @@ def create_tile_image(dst_dir: str, local_images: list[str]) -> (str, dict[str, 
 
     dst_width = get_config_or_default("VBNA_DST_IMAGE_WIDTH", 2048)
     dst_height = get_config_or_default("VBNA_DST_IMAGE_HEIGHT", 2048)
-    dst_margin = get_config_or_default("VBNA_DST_IMAGE_MARGIN", 32)
+    dst_margin = get_config_or_default("VBNA_DST_IMAGE_MARGIN", 0)
 
     num_columns = dst_width // src_width
     num_rows = dst_height // src_height
