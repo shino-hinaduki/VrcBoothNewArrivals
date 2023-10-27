@@ -1,5 +1,6 @@
 name: Deploy to Self Hosted Runner
 on:
+  workflow_dispatch: {}
   push:
     tags:
       - "v*"
