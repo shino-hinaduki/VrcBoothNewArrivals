@@ -233,7 +233,10 @@ def create_tile_image(dst_dir: str, local_images: list[str]) -> (str, dict[str, 
                 src_image.resize((src_width, src_height))
                 dst_image.paste(
                     src_image,
-                    (x * (src_width + dst_margin), y * (src_height + dst_margin)),
+                    (
+                        x * (src_width + dst_margin),
+                        dst_height - (y + 1) * (src_height + dst_margin),  # 下から上方向に配置する
+                    ),
                 )
                 num_items += 1
         dst_image.save(dst_path)
